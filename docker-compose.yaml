@@ -1,0 +1,34 @@
+
+
+services:
+  api:
+    build:
+      context: ./packages/api
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+
+  llm:
+    build: .
+    container_name: otimizacao-llm
+    ports:
+      - "11434:11434"
+    volumes:
+      # Persist Ollama's data and downloaded models
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+    # The command to start Ollama is already in the Dockerfile 
+
+  # frontend:
+  #   build:
+  #     context: ./packages/frontend
+  #   ports:
+  #     - "3000:3000"
+  otimizador:
+    build:
+      context: ./packages/otimizador
+    command: python main.py
+
+volumes:
+  ollama-data: 
