@@ -1,27 +1,26 @@
 
 services:
   web:
-    build: packages/fastapi
+    build: apps/api
     ports:
       - 8000:8000
     volumes:
-      - ./packages/fastapi/:/app
+      - ./apps/api/:/app
     networks:
-      - tutorial-net
+      - fase2-net
   ollama:
-    build: packages/ollama
+    build: apps/ollama
     ports:
       - 11434:11434
     volumes:
-      - tutorial-vol:/ollama
+      - fase2-vol:/ollama
     networks:
-      - tutorial-net
-    entrypoint: ["/usr/bin/bash", "/pull-smollm2.sh"]
+      - fase2-net
 
 networks:
-  tutorial-net:
+  fase2-net:
     driver: bridge
 
 volumes:
-  tutorial-vol:
+  fase2-vol:
     driver: local

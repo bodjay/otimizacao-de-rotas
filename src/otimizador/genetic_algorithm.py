@@ -326,7 +326,6 @@ if __name__ == '__main__':
     best_solutions = []
     
     for generation in range(N_GENERATIONS):
-  
         
         population_fitness = [calculate_fitness(individual) for individual in population]    
         
