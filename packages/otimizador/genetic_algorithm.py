@@ -1,5 +1,3 @@
-
-
 import random
 import math
 import copy 
@@ -178,6 +176,139 @@ def sort_population(population: List[List[Tuple[float, float]]], fitness: List[f
     return sorted_population, sorted_fitness
 
 
+# Representação genética para rotas e função fitness com restrições realistas
+
+def calculate_fitness_with_constraints(path: List[Tuple[float, float]], priorities: List[int], vehicle_capacity: int, max_distance: float) -> float:
+    """
+    Calcula a aptidão de uma rota considerando restrições realistas.
+
+    Parâmetros:
+    - path (List[Tuple[float, float]]): Lista de coordenadas representando a rota.
+    - priorities (List[int]): Lista de prioridades para cada entrega (1 = alta prioridade, 0 = baixa prioridade).
+    - vehicle_capacity (int): Capacidade máxima de carga do veículo.
+    - max_distance (float): Distância máxima que o veículo pode percorrer.
+
+    Retorna:
+    - float: Valor da aptidão (quanto menor, melhor).
+    """
+    total_distance = 0
+    total_priority_penalty = 0
+
+    # Verificar capacidade do veículo
+    if len(path) > vehicle_capacity:
+        return float('inf')  # Penalidade alta para rotas que excedem a capacidade
+
+    # Calcular distância total e penalidades de prioridade
+    for i in range(len(path)):
+        total_distance += calculate_distance(path[i], path[(i + 1) % len(path)])
+        if priorities[i] == 0:  # Penalidade para entregas de baixa prioridade
+            total_priority_penalty += 10
+
+    # Verificar autonomia do veículo
+    if total_distance > max_distance:
+        return float('inf')  # Penalidade alta para rotas que excedem a autonomia
+
+    # Aptidão é baseada na distância total e penalidades
+    return total_distance + total_priority_penalty
+
+# Exemplo de uso:
+# path = [(0, 0), (1, 1), (2, 2)]
+# priorities = [1, 0, 1]
+# fitness = calculate_fitness_with_constraints(path, priorities, vehicle_capacity=5, max_distance=100)
+# print(f"Aptidão da rota: {fitness}")
+
+
+# Operadores Genéticos: Seleção, Crossover e Mutação
+
+def selection_tournament(population: List[List[Tuple[float, float]]], fitnesses: List[float], tournament_size: int) -> List[Tuple[float, float]]:
+    """
+    Seleciona um indivíduo da população usando o método de torneio.
+
+    Parâmetros:
+    - population (List[List[Tuple[float, float]]]): População atual.
+    - fitnesses (List[float]): Lista de valores de aptidão para cada indivíduo.
+    - tournament_size (int): Número de indivíduos no torneio.
+
+    Retorna:
+    - List[Tuple[float, float]]: O indivíduo vencedor do torneio.
+    """
+    tournament = random.sample(list(zip(population, fitnesses)), tournament_size)
+    winner = min(tournament, key=lambda x: x[1])  # Menor fitness vence
+    return winner[0]
+
+def mutate(route: List[Tuple[float, float]], mutation_probability: float) -> List[Tuple[float, float]]:
+    """
+    Aplica mutação em uma rota com uma dada probabilidade.
+
+    Parâmetros:
+    - route (List[Tuple[float, float]]): Rota a ser mutada.
+    - mutation_probability (float): Probabilidade de mutação.
+
+    Retorna:
+    - List[Tuple[float, float]]: Rota mutada.
+    """
+    if random.random() < mutation_probability:
+        idx1, idx2 = random.sample(range(len(route)), 2)
+        route[idx1], route[idx2] = route[idx2], route[idx1]  # Troca dois pontos
+    return route
+
+
+# Integração dos operadores genéticos ao fluxo principal do algoritmo genético
+
+def genetic_algorithm(cities_location: List[Tuple[float, float]], population_size: int, generations: int, mutation_probability: float, tournament_size: int, vehicle_capacity: int, max_distance: float) -> List[Tuple[float, float]]:
+    """
+    Executa o algoritmo genético para otimização de rotas.
+
+    Parâmetros:
+    - cities_location (List[Tuple[float, float]]): Lista de coordenadas das cidades.
+    - population_size (int): Tamanho da população.
+    - generations (int): Número de gerações.
+    - mutation_probability (float): Probabilidade de mutação.
+    - tournament_size (int): Tamanho do torneio para seleção.
+    - vehicle_capacity (int): Capacidade máxima do veículo.
+    - max_distance (float): Distância máxima que o veículo pode percorrer.
+
+    Retorna:
+    - List[Tuple[float, float]]: A melhor rota encontrada.
+    """
+    # Gerar população inicial
+    population = generate_random_population(cities_location, population_size)
+
+    for generation in range(generations):
+        # Calcular fitness para cada indivíduo
+        fitnesses = [
+            calculate_fitness_with_constraints(individual, [1] * len(individual), vehicle_capacity, max_distance)
+            for individual in population
+        ]
+
+        # Nova população
+        new_population = []
+
+        while len(new_population) < population_size:
+            # Seleção
+            parent1 = selection_tournament(population, fitnesses, tournament_size)
+            parent2 = selection_tournament(population, fitnesses, tournament_size)
+
+            # Crossover
+            child = order_crossover(parent1, parent2)
+
+            # Mutação
+            child = mutate(child, mutation_probability)
+
+            new_population.append(child)
+
+        population = new_population
+
+    # Retornar o melhor indivíduo da última geração
+    best_index = fitnesses.index(min(fitnesses))
+    return population[best_index]
+
+# Exemplo de uso:
+# cities = [(0, 0), (1, 1), (2, 2), (3, 3)]
+# best_route = genetic_algorithm(cities, population_size=10, generations=50, mutation_probability=0.1, tournament_size=3, vehicle_capacity=5, max_distance=100)
+# print(f"Melhor rota: {best_route}")
+
+
 if __name__ == '__main__':
     N_CITIES = 10
     
@@ -214,7 +345,8 @@ if __name__ == '__main__':
         while len(new_population) < POPULATION_SIZE:
             
             # SELECTION
-            parent1, parent2 = random.choices(population[:10], k=2)  # Select parents from the top 10 individuals
+            parent1 = selection_tournament(population, population_fitness, tournament_size=10)
+            parent2 = selection_tournament(population, population_fitness, tournament_size=10)
             
             # CROSSOVER
             child1 = order_crossover(parent1, parent2)
@@ -227,6 +359,6 @@ if __name__ == '__main__':
     
         print('generation: ', generation)
         population = new_population
-    
+
 
 

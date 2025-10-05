@@ -40,7 +40,7 @@ def draw_plot(screen: pygame.Surface, x: list, y: list, x_label: str = 'Generati
     size = canvas.get_width_height()
     surf = pygame.image.fromstring(raw_data, size, "RGB")
     screen.blit(surf, (0, 0))
-    
+
 def draw_cities(screen: pygame.Surface, cities_locations: List[Tuple[int, int]], rgb_color: Tuple[int, int, int], node_radius: int) -> None:
     """
     Draws circles representing cities on the given Pygame screen.
@@ -54,8 +54,14 @@ def draw_cities(screen: pygame.Surface, cities_locations: List[Tuple[int, int]],
     Returns:
     None
     """
+    screen_width, screen_height = screen.get_size()
+
     for city_location in cities_locations:
-        pygame.draw.circle(screen, rgb_color, city_location, node_radius)
+        x, y = city_location
+        print(f"Desenhando cidade em: {city_location}, Raio: {node_radius}")  # Log para depuração
+        # Verificar se as coordenadas estão dentro dos limites da tela
+        if 0 <= x <= screen_width and 0 <= y <= screen_height:
+            pygame.draw.circle(screen, rgb_color, city_location, int(node_radius))
 
 
 
@@ -72,7 +78,7 @@ def draw_paths(screen: pygame.Surface, path: List[Tuple[int, int]], rgb_color: T
     pygame.draw.lines(screen, rgb_color, True, path, width=width)
 
 
-def draw_text(screen: pygame.Surface, text: str, color: pygame.Color) -> None:
+def draw_text(screen: pygame.Surface, text: str, color: pygame.Color, position: Tuple[int, int]) -> None:
     """
     Draw text on a Pygame screen.
 
@@ -80,15 +86,13 @@ def draw_text(screen: pygame.Surface, text: str, color: pygame.Color) -> None:
     - screen (pygame.Surface): The Pygame surface to draw the text on.
     - text (str): The text to be displayed.
     - color (pygame.Color): The color of the text.
+    - position (Tuple[int, int]): The (x, y) position to draw the text.
     """
     pygame.font.init()  # You have to call this at the start
 
     font_size = 15
     my_font = pygame.font.SysFont('Arial', font_size)
     text_surface = my_font.render(text, False, color)
-    
-    cities_locations = []  # Assuming you have this list defined somewhere
-    text_position = (np.average(np.array(cities_locations)[:, 0]), HEIGHT - 1.5 * font_size)
-    
-    screen.blit(text_surface, text_position)
+
+    screen.blit(text_surface, position)
 
