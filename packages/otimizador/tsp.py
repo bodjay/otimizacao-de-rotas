@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import random
 import itertools
-from packages.otimizador.genetic_algorithm_tech2 import mutate, order_crossover, generate_random_population, calculate_fitness, sort_population, default_problems
+from genetic_algorithm import mutate, order_crossover, generate_random_population, calculate_fitness, sort_population, default_problems
 from draw_functions import draw_paths, draw_plot, draw_cities
 import sys
 import numpy as np
@@ -20,7 +20,7 @@ PLOT_X_OFFSET = 450
 # GA
 N_CITIES = 15
 POPULATION_SIZE = 100
-N_GENERATIONS = 10
+N_GENERATIONS = None
 MUTATION_PROBABILITY = 0.5
 
 # Define colors
@@ -112,11 +112,11 @@ while running:
 
         # selection
         # simple selection based on first 10 best solutions
-        parent1, parent2 = random.choices(population[:10], k=2)
+        # parent1, parent2 = random.choices(population[:10], k=2)
 
         # solution based on fitness probability
         probability = 1 / np.array(population_fitness)
-        # parent1, parent2 = random.choices(population, weights=probability, k=2)
+        parent1, parent2 = random.choices(population, weights=probability, k=2)
 
         # child1 = order_crossover(parent1, parent2)
         child1 = order_crossover(parent1, parent1)

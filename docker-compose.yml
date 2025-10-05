@@ -1,0 +1,27 @@
+
+services:
+  web:
+    build: packages/fastapi
+    ports:
+      - 8000:8000
+    volumes:
+      - ./packages/fastapi/:/app
+    networks:
+      - tutorial-net
+  ollama:
+    build: packages/ollama
+    ports:
+      - 11434:11434
+    volumes:
+      - tutorial-vol:/ollama
+    networks:
+      - tutorial-net
+    entrypoint: ["/usr/bin/bash", "/pull-smollm2.sh"]
+
+networks:
+  tutorial-net:
+    driver: bridge
+
+volumes:
+  tutorial-vol:
+    driver: local

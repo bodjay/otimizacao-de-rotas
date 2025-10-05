@@ -40,8 +40,7 @@ def draw_plot(screen: pygame.Surface, x: list, y: list, x_label: str = 'Generati
     size = canvas.get_width_height()
     surf = pygame.image.fromstring(raw_data, size, "RGB")
     screen.blit(surf, (0, 0))
-
-
+    
 def draw_cities(screen: pygame.Surface, cities_locations: List[Tuple[int, int]], rgb_color: Tuple[int, int, int], node_radius: int) -> None:
     """
     Draws circles representing cities on the given Pygame screen.
@@ -57,6 +56,7 @@ def draw_cities(screen: pygame.Surface, cities_locations: List[Tuple[int, int]],
     """
     for city_location in cities_locations:
         pygame.draw.circle(screen, rgb_color, city_location, node_radius)
+
 
 
 def draw_paths(screen: pygame.Surface, path: List[Tuple[int, int]], rgb_color: Tuple[int, int, int], width: int = 1):
@@ -86,9 +86,9 @@ def draw_text(screen: pygame.Surface, text: str, color: pygame.Color) -> None:
     font_size = 15
     my_font = pygame.font.SysFont('Arial', font_size)
     text_surface = my_font.render(text, False, color)
-
+    
     cities_locations = []  # Assuming you have this list defined somewhere
-    text_position = (np.average(np.array(cities_locations)
-                     [:, 0]), HEIGHT - 1.5 * font_size)
-
+    text_position = (np.average(np.array(cities_locations)[:, 0]), HEIGHT - 1.5 * font_size)
+    
     screen.blit(text_surface, text_position)
+
