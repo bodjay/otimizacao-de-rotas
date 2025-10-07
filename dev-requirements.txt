@@ -3,3 +3,4 @@ flake8==4.0.1
 isort==5.10.1
 pyright==1.1.239
 pygame==2.1.2
+stupertools==0.61.0

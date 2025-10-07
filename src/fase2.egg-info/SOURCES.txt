@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/fase2.egg-info/PKG-INFO
+src/fase2.egg-info/SOURCES.txt
+src/fase2.egg-info/dependency_links.txt
+src/fase2.egg-info/top_level.txt
+src/otimizador/benchmark_att48.py
+src/otimizador/draw_functions.py
+src/otimizador/genetic_algorithm.py
+tests/test_genetic_algorithm.py

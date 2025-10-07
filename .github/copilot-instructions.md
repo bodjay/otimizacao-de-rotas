@@ -78,8 +78,8 @@ Este repositório implementa um sistema de otimização de rotas para distribui�
 
 ## Arquivos Importantes
 - `README.md`: Documentação geral do projeto.
-- `packages/otimizador/genetic_algorithm.py`: Implementação do algoritmo genético.
-- `packages/fastapi/app.py`: API para interação com LLMs.
+- `src/otimizador/genetic_algorithm.py`: Implementação do algoritmo genético.
+- `apps/api/app.py`: API para interação com LLMs.
 - `docker-compose.yml`: Configuração para orquestração de contêineres (se aplicável).
 
 ---

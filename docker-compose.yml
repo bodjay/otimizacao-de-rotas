@@ -1,19 +1,11 @@
 
 services:
   web:
-    build: apps/api
+    build: .
     ports:
       - 8000:8000
     volumes:
       - ./apps/api/:/app
-    networks:
-      - fase2-net
-  ollama:
-    build: apps/ollama
-    ports:
-      - 11434:11434
-    volumes:
-      - fase2-vol:/ollama
     networks:
       - fase2-net
 
