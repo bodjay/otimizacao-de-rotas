@@ -255,12 +255,19 @@ def mutate(route: List[Tuple[float, float]], mutation_probability: float) -> Lis
 
 # Integração dos operadores genéticos ao fluxo principal do algoritmo genético
 
-def genetic_algorithm(cities_location: List[Tuple[float, float]], population_size: int, generations: int, mutation_probability: float, tournament_size: int, vehicle_capacity: int, max_distance: float) -> List[Tuple[float, float]]:
+def genetic_algorithm(
+        cities_location: List[dict],
+        population_size: int = 10,
+        generations: int = 200,
+        mutation_probability: float = 0.5,
+        tournament_size: int = 5,
+        vehicle_capacity: int = 10,
+        max_distance: float = 1000) -> List[dict]:
     """
     Executa o algoritmo genético para otimização de rotas.
 
     Parâmetros:
-    - cities_location (List[Tuple[float, float]]): Lista de coordenadas das cidades.
+    - cities_location (List[dict]): Lista de objetos representando as cidades.
     - population_size (int): Tamanho da população.
     - generations (int): Número de gerações.
     - mutation_probability (float): Probabilidade de mutação.
@@ -269,10 +276,13 @@ def genetic_algorithm(cities_location: List[Tuple[float, float]], population_siz
     - max_distance (float): Distância máxima que o veículo pode percorrer.
 
     Retorna:
-    - List[Tuple[float, float]]: A melhor rota encontrada.
+    - List[dict]: A melhor rota encontrada como uma lista de objetos cidade.
     """
+    # Extrair coordenadas das cidades
+    cities_coordinates = [(city['latitude'], city['longitude']) for city in cities_location]
+
     # Gerar população inicial
-    population = generate_random_population(cities_location, population_size)
+    population = generate_random_population(cities_coordinates, population_size)
 
     for generation in range(generations):
         # Calcular fitness para cada indivíduo
@@ -301,63 +311,18 @@ def genetic_algorithm(cities_location: List[Tuple[float, float]], population_siz
 
     # Retornar o melhor indivíduo da última geração
     best_index = fitnesses.index(min(fitnesses))
-    return population[best_index]
+    best_route_coordinates = population[best_index]
+
+    # Mapear coordenadas de volta para objetos cidade
+    best_route = []
+    for coord in best_route_coordinates:
+        city = next((city for city in cities_location if city['latitude'] == coord[0] and city['longitude'] == coord[1]), None)
+        if city:
+            best_route.append(city)
+
+    return best_route
 
 # Exemplo de uso:
 # cities = [(0, 0), (1, 1), (2, 2), (3, 3)]
 # best_route = genetic_algorithm(cities, population_size=10, generations=50, mutation_probability=0.1, tournament_size=3, vehicle_capacity=5, max_distance=100)
 # print(f"Melhor rota: {best_route}")
-
-
-if __name__ == '__main__':
-    N_CITIES = 10
-    
-    POPULATION_SIZE = 100
-    N_GENERATIONS = 100
-    MUTATION_PROBABILITY = 0.3
-    cities_locations = [(random.randint(0, 100), random.randint(0, 100))
-              for _ in range(N_CITIES)]
-    
-    # CREATE INITIAL POPULATION
-    population = generate_random_population(cities_locations, POPULATION_SIZE)
-
-    # Lists to store best fitness and generation for plotting
-    best_fitness_values = []
-    best_solutions = []
-    
-    for generation in range(N_GENERATIONS):
-        
-        population_fitness = [calculate_fitness(individual) for individual in population]    
-        
-        population, population_fitness = sort_population(population,  population_fitness)
-        
-        best_fitness = calculate_fitness(population[0])
-        best_solution = population[0]
-           
-        best_fitness_values.append(best_fitness)
-        best_solutions.append(best_solution)    
-
-        print(f"Generation {generation}: Best fitness = {best_fitness}")
-
-        new_population = [population[0]]  # Keep the best individual: ELITISM
-        
-        while len(new_population) < POPULATION_SIZE:
-            
-            # SELECTION
-            parent1 = selection_tournament(population, population_fitness, tournament_size=10)
-            parent2 = selection_tournament(population, population_fitness, tournament_size=10)
-            
-            # CROSSOVER
-            child1 = order_crossover(parent1, parent2)
-            
-            ## MUTATION
-            child1 = mutate(child1, MUTATION_PROBABILITY)
-            
-            new_population.append(child1)
-            
-    
-        print('generation: ', generation)
-        population = new_population
-
-
-
