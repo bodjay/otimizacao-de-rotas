@@ -4,10 +4,78 @@ import copy
 from typing import List, Tuple
 
 default_problems = {
-5: [(733, 251), (706, 87), (546, 97), (562, 49), (576, 253)],
-10:[(470, 169), (602, 202), (754, 239), (476, 233), (468, 301), (522, 29), (597, 171), (487, 325), (746, 232), (558, 136)],
-12:[(728, 67), (560, 160), (602, 312), (712, 148), (535, 340), (720, 354), (568, 300), (629, 260), (539, 46), (634, 343), (491, 135), (768, 161)],
-15:[(512, 317), (741, 72), (552, 50), (772, 346), (637, 12), (589, 131), (732, 165), (605, 15), (730, 38), (576, 216), (589, 381), (711, 387), (563, 228), (494, 22), (787, 288)]
+    5: [
+        (-23.5505, -46.6333),  # São Paulo, SP
+        (-22.9068, -43.1729),  # Rio de Janeiro, RJ
+        (-19.9167, -43.9345),  # Belo Horizonte, MG
+        (-30.0331, -51.2300),  # Porto Alegre, RS
+        (-15.7797, -47.9297)   # Brasília, DF
+    ],
+    10: [
+        (-23.5505, -46.6333),  # São Paulo, SP
+        (-22.9068, -43.1729),  # Rio de Janeiro, RJ
+        (-19.9167, -43.9345),  # Belo Horizonte, MG
+        (-30.0331, -51.2300),  # Porto Alegre, RS
+        (-15.7797, -47.9297),  # Brasília, DF
+        (-3.7172, -38.5434),   # Fortaleza, CE
+        (-12.9714, -38.5014),  # Salvador, BA
+        (-8.0476, -34.8770),   # Recife, PE
+        (-25.4284, -49.2733),  # Curitiba, PR
+        (-16.6809, -49.2533)   # Goiânia, GO
+    ],
+    12: [
+        (-23.5505, -46.6333),  # São Paulo, SP
+        (-22.9068, -43.1729),  # Rio de Janeiro, RJ
+        (-19.9167, -43.9345),  # Belo Horizonte, MG
+        (-30.0331, -51.2300),  # Porto Alegre, RS
+        (-15.7797, -47.9297),  # Brasília, DF
+        (-3.7172, -38.5434),   # Fortaleza, CE
+        (-12.9714, -38.5014),  # Salvador, BA
+        (-8.0476, -34.8770),   # Recife, PE
+        (-25.4284, -49.2733),  # Curitiba, PR
+        (-16.6809, -49.2533),  # Goiânia, GO
+        (-1.4554, -48.4902),   # Belém, PA
+        (-20.4697, -54.6201)   # Campo Grande, MS
+    ],
+    15: [
+        (-23.5505, -46.6333),  # São Paulo, SP
+        (-22.9068, -43.1729),  # Rio de Janeiro, RJ
+        (-19.9167, -43.9345),  # Belo Horizonte, MG
+        (-30.0331, -51.2300),  # Porto Alegre, RS
+        (-15.7797, -47.9297),  # Brasília, DF
+        (-3.7172, -38.5434),   # Fortaleza, CE
+        (-12.9714, -38.5014),  # Salvador, BA
+        (-8.0476, -34.8770),   # Recife, PE
+        (-25.4284, -49.2733),  # Curitiba, PR
+        (-16.6809, -49.2533),  # Goiânia, GO
+        (-1.4554, -48.4902),   # Belém, PA
+        (-20.4697, -54.6201),  # Campo Grande, MS
+        (-5.7950, -35.2094),   # Natal, RN
+        (-22.8842, -43.1040),  # Niterói, RJ
+        (-23.9608, -46.3332)   # Santos, SP
+    ],
+    20: [
+        (-23.5505, -46.6333),  # São Paulo, SP
+        (-22.9068, -43.1729),  # Rio de Janeiro, RJ
+        (-19.9167, -43.9345),  # Belo Horizonte, MG
+        (-30.0331, -51.2300),  # Porto Alegre, RS
+        (-15.7797, -47.9297),  # Brasília, DF
+        (-3.7172, -38.5434),   # Fortaleza, CE
+        (-12.9714, -38.5014),  # Salvador, BA
+        (-8.0476, -34.8770),   # Recife, PE
+        (-25.4284, -49.2733),  # Curitiba, PR
+        (-16.6809, -49.2533),  # Goiânia, GO
+        (-1.4554, -48.4902),   # Belém, PA
+        (-20.4697, -54.6201),  # Campo Grande, MS
+        (-5.7950, -35.2094),   # Natal, RN
+        (-22.8842, -43.1040),  # Niterói, RJ
+        (-23.9608, -46.3332),  # Santos, SP
+        (-21.7673, -43.3493),  # Juiz de Fora, MG
+        (-22.2528, -54.8167),  # Dourados, MS
+        (-23.3045, -51.1693),  # Londrina, PR
+        (-22.3145, -49.0587),  # Bauru, SP
+        (-29.1686, -51.1794)   # Caxias do Sul, RS
+    ]
 }
 
 def generate_random_population(cities_location: List[Tuple[float, float]], population_size: int) -> List[List[Tuple[float, float]]]:
@@ -177,7 +245,10 @@ def sort_population(population: List[List[Tuple[float, float]]], fitness: List[f
 
 
 # Representação genética para rotas e função fitness com restrições realistas
-
+#   - Prioridades diferentes para entregas (medicamentos críticos vs. insumos regulares);
+#   - Capacidade limitada de carga dos veículos;
+#   - Autonomia limitada dos veículos (distância máxima que pode ser percorrida);
+#   - Múltiplos veículos disponíveis (ampliando para o problema de roteamento de veículos - VRP);
 def calculate_fitness_with_constraints(path: List[Tuple[float, float]], priorities: List[int], vehicle_capacity: int, max_distance: float) -> float:
     """
     Calcula a aptidão de uma rota considerando restrições realistas.
@@ -257,6 +328,7 @@ def mutate(route: List[Tuple[float, float]], mutation_probability: float) -> Lis
 
 def genetic_algorithm(
         cities_location: List[dict],
+        priorities: List[int],
         population_size: int = 10,
         generations: int = 200,
         mutation_probability: float = 0.5,
@@ -287,7 +359,7 @@ def genetic_algorithm(
     for generation in range(generations):
         # Calcular fitness para cada indivíduo
         fitnesses = [
-            calculate_fitness_with_constraints(individual, [1] * len(individual), vehicle_capacity, max_distance)
+            calculate_fitness_with_constraints(individual, priorities, vehicle_capacity, max_distance)
             for individual in population
         ]
 
