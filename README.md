@@ -7,7 +7,7 @@
 ## 1.1. Incluir restrições realistas
 Para considerar as restrições na otimizção, é preciso consideralas no momento da avaliação dos resultados. Neste caso, foi criado um novo método de fitness que abrange as novas restrições.
 
-#### tools/otimizador/genetic.py:184:1
+#### tools/otimizador/genetic.py:252:1
 ```py
 # Representação genética para rotas e função fitness com restrições realistas
 #   - Prioridades diferentes para entregas (medicamentos críticos vs. insumos regulares);
